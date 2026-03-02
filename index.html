@@ -1,0 +1,952 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Meta Tags based on your project -->
+  <title>OmniVTA: Visuo-Tactile World Modeling for Contact-Rich Robotic Manipulation</title>
+  <meta name="title" content="OmniVTA: Visuo-Tactile World Modeling for Contact-Rich Robotic Manipulation">
+  <meta name="description" content="We introduce OmniVTA, a large-scale visuo-tactile system featuring a dataset of over 20,000 trajectories and a slow-fast manipulation framework that achieves state-of-the-art performance across six contact-rich manipulation tasks.">
+  <meta name="keywords" content="Embodied AI, Visuo-Tactile World Model">
+  <meta name="author" content="OmniVTA Team">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  
+  <!-- Social Media Meta Tags (You can fill these out) -->
+  <meta property="og:title" content="OmniVTA: Visuo-Tactile World Modeling for Contact-Rich Robotic Manipulation">
+  <meta property="og:description" content="OmniVTA is large-scale visuo-tactile system featuring a dataset of over 20,000 trajectories and a slow-fast manipulation framework that achieves state-of-the-art performance across six contact-rich manipulation tasks.">
+  <meta property="og:image" content="assets/img/background.gif"> <!-- Main image for preview -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="assets/img/background.gif">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="favicon.png">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Custom CSS for Template -->
+  <style>
+    :root {
+    --primary-color: #3273dc; /* Bulma's default blue */
+    /* Dark theme variables */
+    --text-color: #e5e7eb;              /* slate-200 */
+    --background-color: #080808;        /* near-black, deep blue-black */
+    --light-background-color: #0b0b0b;  /* slate-900 for panels */
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: var(--background-color);
+        }
+    .publication-title {
+      font-weight: 800;
+      font-size: 2.5rem;
+    }
+    .publication-authors {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+    }
+    .publication-links {
+      margin-top: 1.5rem;
+    }
+    .publication-links .link-block {
+      margin: 0.5rem;
+    }
+        .footer {
+            background-color: var(--light-background-color);
+        }
+    .bibtex-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    /* Custom style for your banner */
+    .realmirror-banner {
+      background-size: cover;
+      background-position: center center;
+      color: white;
+    }
+    .realmirror-banner .hero-body {
+      background-color: rgba(0, 0, 0, 0.45); /* Dark overlay for text readability */
+    }
+    .realmirror-banner .title {
+      color: white;
+      font-size: 4rem;
+      font-weight: 800;
+    }
+    .realmirror-banner .subtitle {
+      color: #f5f5f5;
+      font-weight: 500;
+    }
+    .realmirror-banner .button.is-white.is-outlined {
+      border-color: white;
+      color: white;
+      font-weight: bold;
+    }
+    .realmirror-banner .button.is-white.is-outlined:hover {
+      background: white;
+      color: black;
+    }
+    .feature-icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+    .section-title {
+        margin-bottom: 3rem;
+    }
+    /*
+    * (修改后) 让视频容器超过其父容器宽度并保持居中
+    */
+    .publication-video {
+        /* 1. 设置您希望的宽度，可以超过100% */
+        width: 120%; 
+        max-width: 120%; /* 确保最大宽度与宽度一致 */
+
+        /* 2. 使用 transform 技巧进行精确居中 */
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* 确保 video 标签本身填满其新的、更大的容器 */
+    .publication-video video {
+        width: 100%;
+        height: auto; /* 保持视频的原始宽高比 */
+        display: block; /* 移除 video 标签可能存在的底部额外空间 */
+    }
+    .result-image-container {
+        padding: 1rem;
+    }
+    /* MODIFIED: CSS for centering oversized images */
+    .result-image {
+        display: block;
+        position: relative;
+        left: 50%;
+        
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        width: 60%;           
+        max-width: 100%;       
+        
+        /* The transform property now handles centering */
+        transform: translateX(-50%);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    .result-image-statistics {
+        display: block;
+        position: relative;
+        left: 50%;
+
+        background-color: white;
+        
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        width: 60%;           
+        max-width: 100%;       
+        
+        /* The transform property now handles centering */
+        transform: translateX(-50%);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    /* MODIFIED: Hover effect combines centering and animation */
+    .result-image:hover {
+        /* We must include translateX(-50%) to keep it centered during the hover animation */
+        transform: translateX(-50%) translateY(-10px) scale(1.02);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    }
+    .result-image-statistics:hover {
+        /* We must include translateX(-50%) to keep it centered during the hover animation */
+        transform: translateX(-50%) translateY(-10px) scale(1.02);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    }
+    .realmirror-banner .button.is-white.is-outlined:focus {
+    background-color: transparent; /* 背景恢复透明 */
+    color: white;                 /* 文字恢复白色 */
+    box-shadow: none;             /* 可选：移除 Bulma 框架默认的蓝色焦点轮廓 */
+    }
+
+    /* 
+    (可选，但推荐) 为 :active 状态添加样式
+    这将在用户按住鼠标左键的瞬间提供一个轻微的视觉反馈
+    */
+    .realmirror-banner .button.is-white.is-outlined:active {
+    background-color: rgba(255, 255, 255, 0.15); /* 点击瞬间背景有轻微变化 */
+    transform: translateY(1px); /* 点击瞬间有轻微下沉效果 */
+    }
+    .dot-dash {
+    position: relative;
+    text-align: center;
+    font-size: 55px;
+    line-height: 0;
+    color: #3c88e7;
+    margin: 20px 0 40px;
+    display: block; }
+    .dot-dash:before, .dot-dash:after {
+        content: "";
+        width: 80px;
+        height: 1px;
+        background: #334155; /* slate-700 in dark */
+        position: relative;
+        display: inline-block;
+        top: -2px;
+        margin-right: 10px; }
+    .dot-dash:after {
+        margin-right: 0px;
+        margin-left: 10px; }
+    .dot-dash.dark:before, .dot-dash.dark:after {
+        background: #6a6a6a; }
+    .rounded-video {
+        border-radius: 25px;
+        }
+    .home-slider--anchor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 125px;
+    text-align: center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: end;
+    -webkit-align-items: flex-end;
+    -ms-flex-align: end;
+    align-items: flex-end; }
+    .home-slider--anchor span {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        color: #60a5fa;            /* lighter blue on dark */
+        background: #000000;       /* black circle background */
+        height: 60px;
+        width: 60px;
+        border-radius: 50px;
+        margin: 0 auto;
+        cursor: pointer;
+        position: relative;
+        z-index: 1;
+        font-size: 22px; }
+    .home-slider--anchor:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50px;
+        width: 50%;
+        height: 500px;
+        background: var(--background-color);
+        -webkit-transform: skew(0deg, 8deg);
+        transform: skew(0deg, 8deg);
+        z-index: 0; }
+    .home-slider--anchor:after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50px;
+        width: 50%;
+        height: 500px;
+        background: var(--background-color);
+        -webkit-transform: skew(0deg, -8deg);
+        transform: skew(0deg, -8deg);
+        z-index: 0; }
+
+    /* START: 新增的图片悬浮效果CSS */
+    .interactive-image {
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    .interactive-image:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    }
+    .section-caption {
+        max-width: 1000px; /* 适当加宽以适应段落 */
+        margin: 2rem auto 3rem auto; /* 增加垂直间距 */
+        padding: 1.75rem 2.25rem; /* 增加内部空间 */
+        background-color: #0f172a; /* 暗色卡片背景 */
+        border: 1px solid #334155; /* 暗色边框 */
+        border-radius: 16px; /* 更圆润的边角 */
+        font-size: 1.15rem; /* 调整字体大小 */
+        color: #e5e7eb; /* 亮色字体 */
+        font-weight: 400; /* 标准字重 */
+        line-height: 1.75; /* 提高行高以增强可读性 */
+        box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.35), 0 2px 6px -2px rgba(0, 0, 0, 0.25); /* 深色更明显但柔和的阴影 */
+    }
+
+    .section-caption-with-bg {
+        position: relative;
+        z-index: 1;
+        max-width: 1527px; /* 适当加宽以适应段落 */
+        height: 583px;
+        display: table-cell;
+        vertical-align: middle;
+        margin: 2rem auto 1rem auto; /* 增加垂直间距 */
+        padding: 0.75rem 2.25rem; /* 增加内部空间 */
+        border: 10px solid #334155; /* 暗色边框 */
+        border-radius: 16px; /* 更圆润的边角 */
+        font-size: 1.15rem; /* 调整字体大小 */
+        color: #e5e7eb; /* 暗色字体 */
+        font-weight: 400; /* 标准字重 */
+        line-height: 1.75; /* 提高行高以增强可读性 */
+        box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.35), 0 2px 6px -2px rgba(0, 0, 0, 0.25); /* 深色更明显但柔和的阴影 */
+    }
+    .section-caption-with-bg::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('assets/img/method.png');
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-color: #ffffff; /* 亮色卡片背景 */
+        border-radius: 6px; /* 更圆润的边角 */
+        opacity: 0.5;          /* 控制背景图像的透明度 */
+        z-index: -1;           /* 让伪元素位于内容下方 */
+    }
+
+    .section-caption b {
+        color: #f3f4f6; /* 加粗文字在暗色下更亮 */
+        font-weight: 600; /* 明确字重 */
+    }
+
+    /* 暗色主题：图片边框与阴影调整 */
+    .result-image {
+        border: 1px solid #2a2f3a;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+    }
+
+    /* 暗色主题：链接与文本颜色覆盖（含 !important 以压过内联浅色文本） */
+    a { color: #93c5fd; }
+    a:hover { color: #bfdbfe; }
+    p, .content, .has-text-centered, .title, .subtitle, .section .title, .section .subtitle {
+        color: var(--text-color) !important;
+    }
+
+    /* 暗色主题：Bulma 浅色英雄区覆盖为深色 */
+    .hero.is-light, .section.hero.is-light {
+        background-color: var(--light-background-color);
+        color: var(--text-color);
+    }
+    .hero.is-light .title, .hero.is-light .subtitle, .hero.is-light .content {
+        color: var(--text-color) !important;
+    }
+
+    /* 暗色主题：页脚文本与链接颜色 */
+    .footer { color: #94a3b8; }
+    .footer a { color: #93c5fd; }
+
+    /* 暗色主题：媒体角标覆盖（×2/×4 等），覆盖内联黑色文本 */
+    figure.image + div {
+        color: #f8fafc !important; /* 亮色文字 */
+        text-shadow: -1px -1px 0 #0b0f14, 1px -1px 0 #0b0f14, -1px 1px 0 #0b0f14, 1px 1px 0 #0b0f14 !important; /* 深色描边提升对比 */
+    }
+    
+    /* END: 新增的图片悬浮效果CSS */
+  </style>
+  
+</head>
+<body>
+
+<main id="main-content">
+
+<!-- Section 1: Your Original Header (Recreated with Bulma) -->
+<section class="hero is-fullheight realmirror-banner" style="background-image: url('assets/img/background.gif')">
+  <div class="hero-body" style="position: relative;">
+    <div class="container has-text-centered">
+      <h2 class="subtitle is-4" style="font-size: 1.9rem; white-space: nowrap;">OmniVTA: Visuo-Tactile World Modeling for Contact-Rich Robotic Manipulation</h2>
+      <h1 class="title is-1" style="font-size: 6.2rem;">OmniVTA</h1>
+      <span class="dot-dash">.</span>
+      <div class="content has-text-justified" style="max-width: 900px; margin: 1rem auto; font-size: 1.2rem;">
+        <p>
+          In contact-rich manipulation, vision perceives the scene, while touch senses the contact. These two modalities are fundamentally complementary, yet existing work still lacks large-scale visuo-tactile-action data and systematic analysis of tactile-manipulation patterns. To advance this field, we introduce OmniVTA, a large-scale visuo-tactile system for contact-rich manipulation. OmniVTA brings together two core components: OmniViTac, a visuo-tactile-action aligned dataset with over 20,000 trajectories spanning six tactile-centric manipulation patterns, and a slow-fast manipulation framework that unifies visuo-tactile world modeling, an interaction-dynamics-informed visuo-tactile policy, and a reflexive latent tactile controller. Together, they provide a foundation for more stable and responsive visuo-tactile manipulation. Extensive experiments across all six task categories show that OmniVTA achieves state-of-the-art performance on diverse contact-rich manipulation tasks.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- Section for Motivation -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column">
+        <h3 class="title is-3 has-text-centered">Motivation</h3>
+        <div class="result-image-container">
+          <img src="assets/img/OmniVTA-teaser.png" alt="Method" class="result-image" style="width: 130%; max-width: 130%;"/>
+        </div>
+        <p class="content" style="margin-top: 0.5rem; font-size: 1rem; text-align: left; color: #4a4a4a; line-height: 1;">
+            <b>(1) Tactile Patterns and Dataset:</b> Existing work remains limited in scale and lacks a systematic understanding of tactile interaction patterns and visuo-tactile fusion. We address this gap with OmniVTA and a large-scale visuo-tactile-action aligned dataset, revealing six tactile interaction patterns and two key signal properties: spatial locality and contact-driven dynamics. <br><br>
+            <b>(2) Visuo-Tactile Modeling:</b> Inspired by human feedforward perception, we develop a visuo-tactile world model that predicts future tactile evolution to model interaction dynamics. We further use the difference between predicted and current tactile states as the tactile representation, highlighting anticipated contact changes for action generation. <br><br>
+            <b>(3) Slow-Fast Visuo-Tactile Policy:</b> Building on the learned interaction dynamics, we propose a slow system with a gated visuo-tactile policy that generates coarse actions at 4 Hz, and a fast system with a Reflexive Latent Tactile Controller that outputs fine-grained corrective actions at 60 Hz for robust contact-rich manipulation.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section for Method Image (White background) -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column">
+        <h3 class="title is-3 has-text-centered">Method</h3>
+        <div class="result-image-container">
+          <img src="assets/img/OmniVTA-pipeline.png" alt="Method" class="result-image" style="width: 130%; max-width: 130%;"/>
+        </div>
+        <p class="content" style="margin-top: 0.5rem; font-size: 1rem; text-align: left; color: #4a4a4a; line-height: 1;">
+            We propose a slow-fast visuo-tactile manipulation framework with two tightly coupled components: a slow system for global action planning and a fast system for local tactile feedback control. The slow system combines a visuo-tactile world model with an interaction-dynamics-informed visuo-tactile policy to capture future interaction dynamics and generate coarse actions over a longer horizon. Built on top of this, the Reflexive Latent Tactile Controller serves as a high-frequency tactile controller that refines execution by producing fine-grained actions at 60 Hz, enabling responsive and stable closed-loop manipulation.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section hero is-light">
+    <div class="container">
+        <h3 class="title is-3 has-text-centered" style="margin-bottom: 3rem;">Dataset Collection</h3>
+        <!-- Single video -->
+        <div class="columns is-centered" style="margin-bottom: 3rem;">
+            <div class="column is-10">
+                <figure class="image">
+                    <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                        <source src="assets/moive/data_collection.mp4" type="video/mp4">
+                        您的浏览器不支持视频标签。
+                    </video>
+                </figure>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section for Dataset Statistics (White background) -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column">
+        <h3 class="title is-3 has-text-centered">Dataset Statistics</h3>
+        <div class="result-image-container">
+          <img src="assets/img/OmniVTA-statistic.png" alt="Dataset Statistics" class="result-image-statistics" style="width: 130%; max-width: 130%;"/>
+        </div>
+        <p class="content" style="margin-top: 0.5rem; font-size: 1rem; text-align: left; color: #4a4a4a; line-height: 1;">
+            <b>(a) Pattern-level contact area distribution</b>, highlighting the distinct dichotomy between precision-dominant tasks (concentrated in the 0–10% range) and surface-dominant tasks (peaking at 70–90%). <br><br>
+            <b>(b) Force intensity distribution</b>, showcasing the wide spectrum of force magnitudes required across different manipulation modes. <br><br>
+            <b>(c) Hierarchical distribution</b>, illustrating the rich diversity of 70+ instantiated tasks.  <br><br>
+            <b>(d) Effective contact ratio with variance across patterns</b>, demonstrating the temporal dependency on tactile feedback (e.g., <em>Adjustment</em> exhibits the highest continuous engagement). <br><br>
+            <b>(e) Total trajectory counts per category</b>, demonstrating the massive scale of the benchmark (21,879 trajectories in total), with <em>Grasping</em> forming the foundational largest subset. <br><br>
+            <b>(f) t-SNE projection of the high-dimensional tactile signals</b>, revealing physically intuitive and semantically separable latent clusters that strictly align with the underlying contact mechanics of each interaction pattern.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Section for Open-loop Visualizations -->
+<section class="section hero is-light">
+    <div class="container">
+        <h3 class="title is-3 has-text-centered">Open-loop Visualizations</h3>
+        
+        <div class="columns is-centered" style="margin-bottom: 3rem;">
+            <div class="column is-10">
+                <p class="content" style="margin-top: 0.1em; font-size: 1.1rem; text-align: left; color: #4a4a4a;">
+                    We present both the manipulation videos and the dual-finger tactile signals generated by our visuo-tactile world model, demonstrating a high degree of consistency with the ground truth.
+                </p>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 4rem;">
+            <h4 class="title is-4 has-text-left" style="margin-bottom: 1.5rem; padding-left: 1rem; color: #3273dc;">Assembly</h4>
+            <div style="overflow-x: auto; overflow-y: hidden; padding: 0 1rem;">
+                <div style="display: flex; gap: 1.5rem; min-width: max-content; padding-bottom: 1rem;">
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/insert1.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Insert the Red USB</p>
+                    </div>
+                    <!-- 继续为其余9个Extra Tasks视频添加倍速标签... -->
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/insert3.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Insert the Silver USB</p>
+                    </div>
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/insert4.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Insert the White Plug</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 4rem;">
+            <h4 class="title is-4 has-text-left" style="margin-bottom: 1.5rem; padding-left: 1rem; color: #3273dc;">Cutting</h4>
+            <div style="overflow-x: auto; overflow-y: hidden; padding: 0 1rem;">
+                <div style="display: flex; gap: 1.5rem; min-width: max-content; padding-bottom: 1rem;">
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/cut1.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Cut the Cucumber</p>
+                    </div>
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/cut2.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Cut the Pepper</p>
+                    </div>
+                    <!-- 继续为其余9个Extra Tasks视频添加倍速标签... -->
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/cut3.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Cut the Chinese Yam</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 4rem;">
+            <h4 class="title is-4 has-text-left" style="margin-bottom: 1.5rem; padding-left: 1rem; color: #3273dc;">Peeling</h4>
+            <div style="overflow-x: auto; overflow-y: hidden; padding: 0 1rem;">
+                <div style="display: flex; gap: 1.5rem; min-width: max-content; padding-bottom: 1rem;">
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/peel1.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Peel the Cucumber</p>
+                    </div>
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/peel2.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Peel the Radish</p>
+                    </div>
+                    <!-- 继续为其余9个Extra Tasks视频添加倍速标签... -->
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/peel3.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Peel the Chinese Yam</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 4rem;">
+            <h4 class="title is-4 has-text-left" style="margin-bottom: 1.5rem; padding-left: 1rem; color: #3273dc;">Wiping</h4>
+            <div style="overflow-x: auto; overflow-y: hidden; padding: 0 1rem;">
+                <div style="display: flex; gap: 1.5rem; min-width: max-content; padding-bottom: 1rem;">
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/vase1.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Wipe the Blue Middle Vase</p>
+                    </div>
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/vase2.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Wipe the White Big Vase</p>
+                    </div>
+                    <!-- 继续为其余9个Extra Tasks视频添加倍速标签... -->
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/vase3.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Wipe the White Small Vase</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 4rem;">
+            <h4 class="title is-4 has-text-left" style="margin-bottom: 1.5rem; padding-left: 1rem; color: #3273dc;">Adjustment</h4>
+            <div style="overflow-x: auto; overflow-y: hidden; padding: 0 1rem;">
+                <div style="display: flex; gap: 1.5rem; min-width: max-content; padding-bottom: 1rem;">
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/adj1.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Adjust the White Cuboid then Insert it into the Socket</p>
+                    </div>
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/adj2.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Adjust the Yellow Cylinder then Insert it into the Socket</p>
+                    </div>
+                    <!-- 继续为其余9个Extra Tasks视频添加倍速标签... -->
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/adj3.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Adjust the Test Tube then Insert it into the Socket</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 4rem;">
+            <h4 class="title is-4 has-text-left" style="margin-bottom: 1.5rem; padding-left: 1rem; color: #3273dc;">Grasping</h4>
+            <div style="overflow-x: auto; overflow-y: hidden; padding: 0 1rem;">
+                <div style="display: flex; gap: 1.5rem; min-width: max-content; padding-bottom: 1rem;">
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/cherry.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Grasp the Cherry</p>
+                    </div>
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/blueberry.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Grasp the Blueberry</p>
+                    </div>
+                    <!-- 继续为其余9个Extra Tasks视频添加倍速标签... -->
+                    <div style="flex-shrink: 0; width: 520px;">
+                        <div style="position: relative;">
+                            <figure class="image" style="margin-bottom: 0.3rem;">
+                                <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                                    <source src="assets/moive/open-loop/grape.mp4" type="video/mp4">
+                                    您的浏览器不支持视频标签。
+                                </video>
+                            </figure>
+                        </div>
+                        <p class="has-text-centered" style="font-size: 1.1rem; font-weight: 500; color: #363636; margin-top: 0.2rem;">Grasp the Grape</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section for Closed-loop Visualizations -->
+<section class="section hero is-light">
+    <div class="container">
+        <h3 class="title is-3 has-text-centered">Closed-loop Visualizations</h3>
+
+        <div class="columns is-centered" style="margin-bottom: 3rem;">
+            <div class="column is-10">
+                <p class="content" style="margin-top: 0.1em; font-size: 1.1rem; text-align: left; color: #4a4a4a;">
+                    We demonstrate the responsiveness and robustness of our slow-fast visuo-tactile manipulation framework across a variety of tasks and under perturbations.
+                </p>
+            </div>
+        </div>
+
+        <h4 class="title is-4 has-text-centered" style="margin-top: 2rem; margin-bottom: 2rem; color: #3273dc;">Assembly</h4>
+        
+        <div class="columns is-centered" style="margin-bottom: 3rem;">
+            <div class="column is-7" style="margin: 0 0.3rem;"> 
+                <div style="position: relative;">
+                    <figure class="image" style="margin-bottom: 0.3rem;">
+                        <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                            <source src="assets/moive/closed-loop/assembly.mp4" type="video/mp4">
+                            您的浏览器不支持视频标签。
+                        </video>
+                    </figure>
+                </div>
+            </div>
+            <div class="column is-7" style="margin: 0 0.3rem;"> 
+                <div style="position: relative;">
+                    <figure class="image" style="margin-bottom: 0.3rem;">
+                        <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                            <source src="assets/moive/closed-loop/assembly-perturbation.mp4" type="video/mp4">
+                            您的浏览器不支持视频标签。
+                        </video>
+                    </figure>
+                </div>
+            </div>
+        </div>
+        
+        
+        <h4 class="title is-4 has-text-centered" style="margin-top: 2rem; margin-bottom: 2rem; color: #3273dc;">Cutting</h4>
+        
+        <div class="columns is-centered" style="margin-bottom: 3rem;">
+            <div class="column is-7" style="margin: 0 0.3rem;"> 
+                <div style="position: relative;">
+                    <figure class="image" style="margin-bottom: 0.3rem;">
+                        <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                            <source src="assets/moive/closed-loop/cutting.mp4" type="video/mp4">
+                            您的浏览器不支持视频标签。
+                        </video>
+                    </figure>
+                </div>
+            </div>
+            <div class="column is-7" style="margin: 0 0.3rem;"> 
+                <div style="position: relative;">
+                    <figure class="image" style="margin-bottom: 0.3rem;">
+                        <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                            <source src="assets/moive/closed-loop/cutting-perturbation.mp4" type="video/mp4">
+                            您的浏览器不支持视频标签。
+                        </video>
+                    </figure>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="title is-4 has-text-centered" style="margin-top: 2rem; margin-bottom: 2rem; color: #3273dc;">Peeling</h4>
+        
+        <div class="columns is-centered" style="margin-bottom: 3rem;">
+            <div class="column is-7" style="margin: 0 0.3rem;"> 
+                <div style="position: relative;">
+                    <figure class="image" style="margin-bottom: 0.3rem;">
+                        <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                            <source src="assets/moive/closed-loop/peeling.mp4" type="video/mp4">
+                            您的浏览器不支持视频标签。
+                        </video>
+                    </figure>
+                </div>
+            </div>
+            <div class="column is-7" style="margin: 0 0.3rem;"> 
+                <div style="position: relative;">
+                    <figure class="image" style="margin-bottom: 0.3rem;">
+                        <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                            <source src="assets/moive/closed-loop/peeling-perturbation.mp4" type="video/mp4">
+                            您的浏览器不支持视频标签。
+                        </video>
+                    </figure>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="title is-4 has-text-centered" style="margin-top: 2rem; margin-bottom: 2rem; color: #3273dc;">Wiping</h4>
+        
+        <div class="columns is-centered" style="margin-bottom: 3rem;">
+            <div class="column is-7" style="margin: 0 0.3rem;"> 
+                <div style="position: relative;">
+                    <figure class="image" style="margin-bottom: 0.3rem;">
+                        <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                            <source src="assets/moive/closed-loop/wipping.mp4" type="video/mp4">
+                            您的浏览器不支持视频标签。
+                        </video>
+                    </figure>
+                </div>
+            </div>
+            <div class="column is-7" style="margin: 0 0.3rem;"> 
+                <div style="position: relative;">
+                    <figure class="image" style="margin-bottom: 0.3rem;">
+                        <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                            <source src="assets/moive/closed-loop/wipping-perturbation.mp4" type="video/mp4">
+                            您的浏览器不支持视频标签。
+                        </video>
+                    </figure>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="title is-4 has-text-centered" style="margin-top: 2rem; margin-bottom: 2rem; color: #3273dc;">Adjustment</h4>
+        
+        <div class="columns is-centered" style="margin-bottom: 3rem;">
+            <div class="column is-7" style="margin: 0 0.3rem;"> 
+                <div style="position: relative;">
+                    <figure class="image" style="margin-bottom: 0.3rem;">
+                        <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                            <source src="assets/moive/closed-loop/adj.mp4" type="video/mp4">
+                            您的浏览器不支持视频标签。
+                        </video>
+                    </figure>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="title is-4 has-text-centered" style="margin-top: 2rem; margin-bottom: 2rem; color: #3273dc;">Grasping</h4>
+        
+        <div class="columns is-centered" style="margin-bottom: 3rem;">
+            <div class="column is-7" style="margin: 0 0.3rem;"> 
+                <div style="position: relative;">
+                    <figure class="image" style="margin-bottom: 0.3rem;">
+                        <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                            <source src="assets/moive/closed-loop/grasping.mp4" type="video/mp4">
+                            您的浏览器不支持视频标签。
+                        </video>
+                    </figure>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="section hero is-light">
+    <div class="container">
+        <h3 class="title is-3 has-text-centered" style="margin-bottom: 3rem;">Case Study and Qualitative Results</h3>
+        <!-- Single video -->
+        <div class="columns is-centered" style="margin-bottom: 3rem;">
+            <div class="column is-10">
+                <figure class="image">
+                    <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                        <source src="assets/moive/case1.mp4" type="video/mp4">
+                        您的浏览器不支持视频标签。
+                    </video>
+                </figure>
+                <p class="content" style="margin-top: 0.1em; font-size: 1.1rem; text-align: left; color: #4a4a4a;">
+                    We visualize the visual input, predicted tactile signals, future contact states, and vision-tactile fusion weights during closed-loop inference. When the vase is disturbed, the policy re-predicts contact-related signals and adjusts its action accordingly. When tactile prediction degrades, the policy gradually fails to generate reasonable actions.
+                </p>
+                <figure class="image">
+                    <video controls muted loop preload="metadata" autoplay class="interactive-image" style="width: 100%; height: auto; border-radius: 12px; max-height: none;">
+                        <source src="assets/moive/case2.mp4" type="video/mp4">
+                        您的浏览器不支持视频标签。
+                    </video>
+                </figure>
+                <p class="content" style="margin-top: 0.1em; font-size: 1.1rem; text-align: left; color: #4a4a4a;">
+                    We further show more real-world examples with predicted contact states and fusion weights. The results show that the policy adaptively balances vision and tactile during execution. Even with an unseen knife, it still predicts future contact states accurately and maintains effective visuo-tactile fusion.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noopener noreferrer">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank" rel="noopener noreferrer">Nerfies</a> project page.
+            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+<!-- <script>
+  // BibTeX copy function
+  function copyBibTeX() {
+    const bibtexCode = document.getElementById('bibtex-code').textContent;
+    navigator.clipboard.writeText(bibtexCode).then(function() {
+      alert('BibTeX copied to clipboard!');
+    }, function(err) {+
+      alert('Failed to copy BibTeX.');
+    });
+  }
+</script> -->
+
+</body>
+</html>
