@@ -27,6 +27,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -378,6 +379,135 @@
       color: #111111;
       border-color: #cbd5e1;
     }
+/* ===============================
+   OmniVTA FINAL HEADER (Gold + Animation)
+   =============================== */
+
+    .omnivta-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Title */
+    .omnivta-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 7rem;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.05;
+    }
+
+    /* ===============================
+      GOLD OMNI (核心亮点)
+      =============================== */
+
+    .omni {
+      background: linear-gradient(
+        120deg,
+        #facc15,
+        #fde68a,
+        #fbbf24,
+        #facc15
+      );
+      background-size: 200% auto;
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+
+      animation: gold-shimmer 4s linear infinite;
+
+      text-shadow: 0 0 12px rgba(250, 204, 21, 0.25);
+    }
+
+    /* 金色流动 */
+    @keyframes gold-shimmer {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    /* ===============================
+      VISION / TACTILE / ACTION
+      =============================== */
+
+    .v {
+      color: #60a5fa;
+      text-shadow: 0 0 12px rgba(96,165,250,0.4);
+      animation: pulse-blue 3s ease-in-out infinite;
+    }
+
+    .t {
+      color: #f87171;
+      text-shadow: 0 0 12px rgba(248,113,113,0.4);
+      animation: pulse-red 3s ease-in-out infinite;
+    }
+
+    .a {
+      color: #34d399;
+      text-shadow: 0 0 12px rgba(52,211,153,0.4);
+      animation: pulse-green 3s ease-in-out infinite;
+    }
+
+    /* 呼吸动画（非常轻） */
+    @keyframes pulse-blue {
+      0%,100% { text-shadow: 0 0 8px rgba(96,165,250,0.3); }
+      50% { text-shadow: 0 0 18px rgba(96,165,250,0.6); }
+    }
+
+    @keyframes pulse-red {
+      0%,100% { text-shadow: 0 0 8px rgba(248,113,113,0.3); }
+      50% { text-shadow: 0 0 18px rgba(248,113,113,0.6); }
+    }
+
+    @keyframes pulse-green {
+      0%,100% { text-shadow: 0 0 8px rgba(52,211,153,0.3); }
+      50% { text-shadow: 0 0 18px rgba(52,211,153,0.6); }
+    }
+
+    /* ===============================
+      GRADIENT BAR + SHIMMER
+      =============================== */
+
+    .omnivta-bar {
+      width: 200px;
+      height: 4px;
+      margin-top: 14px;
+      border-radius: 2px;
+
+      background: linear-gradient(
+        90deg,
+        #60a5fa,
+        #f87171,
+        #34d399
+      );
+
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* shimmer effect */
+    .omnivta-bar::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 50%;
+      height: 100%;
+
+      background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.5),
+        transparent
+      );
+
+      animation: bar-shimmer 3s infinite;
+    }
+
+    @keyframes bar-shimmer {
+      0% { left: -50%; }
+      100% { left: 150%; }
+    }
   </style>
 </head>
 <body>
@@ -390,9 +520,12 @@
       <h2 class="subtitle is-4" style="font-size: 1.9rem; white-space: nowrap; color: rgb(255, 255, 255) !important;">
         OmniVTA: Visuo-Tactile World Modeling for Contact-Rich Robotic Manipulation
       </h2>
-      <h1 class="title is-1" style="font-size: 6.2rem;">
-        <span style="color: #F5A623;">Omni</span><span style="color: #7EC8E3;">V</span><span style="color: #F4A6A6;">T</span><span style="color: #A8DDA8;">A</span>
-      </h1>
+      <div class="omnivta-wrapper">
+        <h1 class="title is-1 omnivta-title">
+          <span class="omni">Omni</span><span class="v">V</span><span class="t">T</span><span class="a">A</span>
+        </h1>
+        <div class="omnivta-bar"></div>
+      </div>
       <span class="dot-dash">.</span>
 
       <div class="buttons" style="display:flex; justify-content:center; align-items:center; gap:12px; flex-wrap:wrap; width:100%;">
